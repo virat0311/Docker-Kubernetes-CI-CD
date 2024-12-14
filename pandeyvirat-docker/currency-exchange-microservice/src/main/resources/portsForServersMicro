@@ -1,0 +1,39 @@
+limit service: 8080
+config server:8888
+currency exchange port:8000
+http://localhost:8000/currency-exchange/from/USD/to/INR
+
+currency converison port:8100
+http://localhost:8100/currency-conversion/from/USD/to/INR/quantity/10
+
+****
+In this  we have defined circuit breaker to do retry if 1 service fails, max attempts, exponential backoff, if still
+it will change in state from close->open->halfope->closeor open again
+@Retry()
+@CircuitBreaker()
+@RateLimiter()
+@BulkHead()   //how many concurrent req/calls allowed for each api
+***
+
+
+
+1. Limits Microservice
+Ports: 8080, 8081, etc.
+
+2. Spring Cloud Config Server
+Port: 8888
+
+3. Currency Exchange Microservice
+Ports: 8000, 8001, 8002, etc.
+
+4. Currency Conversion Microservice
+Ports: 8100, 8101, 8102, etc.
+
+5. Netflix Eureka Naming Server
+Port: 8761
+
+6. API Gateway
+Port: 8765
+
+7. Zipkin Distributed Tracing Server
+Port: 9411

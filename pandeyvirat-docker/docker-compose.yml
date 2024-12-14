@@ -1,0 +1,69 @@
+version: '3.7'
+
+services:
+  api-gateway:
+    image: pandeyvirat/mmv2-api-gateway:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8765:8765"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+    environment:
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.SLEUTH.SAMPLER.PROBABILITY: 1.0
+  currency-exchange:
+    image: pandeyvirat/mmv2-currency-exchange-microservice:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8000:8000"
+    networks:
+      - currency-network
+    depends_on:
+      - naming-server
+    environment:
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.SLEUTH.SAMPLER.PROBABILITY: 1.0
+
+  currency-conversion:
+    image: pandeyvirat/mmv2-currency-conversion-microservice:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+        - "8100:8100"
+    networks:
+        - currency-network
+    depends_on:
+        - naming-server
+    environment:
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.SLEUTH.SAMPLER.PROBABILITY: 1.0
+
+
+
+  naming-server:
+    image: pandeyvirat/mmv2-naming-server:0.0.1-SNAPSHOT
+    mem_limit: 700m
+    ports:
+      - "8761:8761"
+    networks:
+      - currency-network
+
+  zipkin-server:
+    image: openzipkin/zipkin:2.23
+    mem_limit: 300m
+    ports:
+      - "9411:9411"
+    networks:
+      - currency-network
+
+networks:
+  currency-network:
+    driver: bridge
+
+
+
+  
